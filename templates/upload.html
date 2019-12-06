@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Upload</title>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+ <script>
+    function readURL(input){
+        var reader = new FileReader();
+
+        reader.onload = function(e){
+            console.log(e.target.result)
+            $('#imgupload').attr('src', e.target.result)
+        }
+            reader.readAsDataURL(input.files[0]);
+    }
+</script>
+</head>
+<body>
+
+<form id="upload-form" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+    <strong>Files:</strong><br>
+    <input id="file-picker" type="file" name="file" onchange="readURL(this)" accept="images/*" multiple>
+    <div id="msg"></div>
+    <figure class="figure">
+        <img id="imgupload" class="figure-img img-fluid rounded" alt="">
+        <figcaption class="figure-caption"></figcaption>
+    </figure>
+    <input type="submit" value="Upload!" id="upload-button">
+</form>
+</body>
+</html>
