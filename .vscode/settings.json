@@ -1,3 +1,7 @@
 {
-    "python.pythonPath": "qc\\Scripts\\python.exe"
+    "python.pythonPath": "venv_py3.6_flask_cv2\\Scripts\\python.exe",
+    "python.linting.flake8Args": [
+        "--max-line-length=200",
+        "--ignore=E402,F841,F401,E302,E305,E902",
+    ],
 }

@@ -1,5 +1,6 @@
 # TrainAndTest.py
 
+import pymssql
 import os
 import random
 import TrainAndTest as tr
@@ -10,7 +11,7 @@ from flask_cors import CORS
 import time
 
 app = Flask(__name__)
-APP_ROOT=os.path.dirname(os.path.abspath(__file__))
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 # Enable CORS
 CORS(app)
 
@@ -18,6 +19,23 @@ CORS(app)
 @app.route("/")
 def addpic():
     return render_template('upload.html')
+
+
+@app.route("/mis")
+def getmis():
+    LotNO = request.args.get("LotNo")
+    conn = pymssql.connect(database='NSP', user='sa',
+                           password='prim', host='192.168.10.2', port=1433)
+    cursor = conn.cursor()
+    sql = "SELECT PartNo, PartCode FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE LotNo = '{}' ;".format(
+        LotNO)
+    cursor.execute(sql)
+    row = cursor.fetchone()
+    Return = {}
+    Return["PartNo"] = row[0]
+    Return["PartCode"] = row[1]
+    return jsonify(Return)
+
 
 @app.route("/upload", methods=['POST'])
 def upload():
@@ -31,22 +49,23 @@ def upload():
     for file in request.files.getlist("file"):
         # print(file)
         filename = file.filename
-        filename = str(random.randint(1,100))+filename
-        destination = target+filename
+        filename = str(random.randint(1, 100)) + filename
+        destination = target + filename
         file.save(destination)
-        #return destination
+        # return destination
         img_value = tr.recg(destination)
-        #return "xxx"
+        # return "xxx"
         if img_value.count('.') <= 1:
             img_value = img_value
         else:
             img_value = None
-            #img_value = "Please Try Again Later"
+            # img_value = "Please Try Again Later"
 
         et = time.time()
-        seconds = et-st
+        seconds = et - st
         print("Seconds since epoch = {} s".format(seconds))
-    return {'reading':img_value} 
+    return {'reading': img_value}
+
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0",port = "8080",debug=True)
+    app.run(host="0.0.0.0", port="8080", debug=True)
