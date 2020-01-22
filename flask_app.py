@@ -21,7 +21,7 @@ def addpic():
     return render_template('upload.html')
 
 
-@app.route("/mis")
+@app.route("/mis", methods=['POST', 'GET'])
 def getmis():
     LotNO = request.args.get("LotNo")
     conn = pymssql.connect(database='NSP', user='sa',
