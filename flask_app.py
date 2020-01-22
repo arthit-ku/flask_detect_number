@@ -21,22 +21,25 @@ def addpic():
     return render_template('upload.html')
 
 
-@app.route("/mis")
+@app.route("/mis", methods=['POST', 'GET'])
 def getmis():
-    LotNO = request.args.get("LotNo")
-    conn = pymssql.connect(database='NSP', user='sa',
-                           password='prim', host='192.168.10.2', port=1433)
-    cursor = conn.cursor()
-    sql = "SELECT PartNo, PartCode, StartQty FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE LotNo = '{}' ;".format(
-        LotNO)
-    cursor.execute(sql)
-    row = cursor.fetchone()
-    Return = {}
-    Return["PartNO"] = row[0]
-    Return["PartCode"] = row[1]
-    Return["StartQty"] = row[2]
-    Return["LotNO"] = LotNO
-    return jsonify(Return)
+    if request.method == 'GET':
+        LotNO = request.args.get("LotNO", default=0, type=int)
+        conn = pymssql.connect(database='NSP', user='sa',
+                               password='prim', host='192.168.10.2', port=1433)
+        cursor = conn.cursor()
+        sql = "SELECT PartNo, PartCode, StartQty FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE LotNo = '{}' ;".format(
+            LotNO)
+        cursor.execute(sql)
+        row = cursor.fetchone()
+        Return = {}
+        Return["PartNO"] = row[0]
+        Return["PartCode"] = row[1]
+        Return["StartQty"] = row[2]
+        Return["LotNO"] = LotNO
+        return jsonify(Return)
+    else:
+        return {'status': 'params error!'}
 
 
 @app.route("/upload", methods=['POST'])
@@ -70,4 +73,5 @@ def upload():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port="8080", debug=True)
+    app.debug = True
+    app.run(host="0.0.0.0", port="8080")
