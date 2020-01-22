@@ -24,19 +24,46 @@ def addpic():
 @app.route("/mis", methods=['POST', 'GET'])
 def getmis():
     if request.method == 'GET':
-        LotNO = request.args.get("LotNO", default=0, type=int)
+        LotNO = request.args.get("LotNO", default="", type=str)
         conn = pymssql.connect(database='NSP', user='sa',
                                password='prim', host='192.168.10.2', port=1433)
         cursor = conn.cursor()
-        sql = "SELECT PartNo, PartCode, StartQty FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE LotNo = '{}' ;".format(
+        sql = "SELECT PartNo, PartCode, StartQty FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE LotNo = '{}';".format(
             LotNO)
         cursor.execute(sql)
         row = cursor.fetchone()
         Return = {}
-        Return["PartNO"] = row[0]
-        Return["PartCode"] = row[1]
-        Return["StartQty"] = row[2]
-        Return["LotNO"] = LotNO
+        if row:
+            Return["PartNO"] = row[0]
+            Return["PartCode"] = row[1]
+            Return["StartQty"] = row[2]
+            Return["LotNO"] = LotNO
+        else:
+            Return["PartNO"] = None
+            Return["PartCode"] = None
+            Return["StartQty"] = None
+            Return["LotNO"] = LotNO
+        return jsonify(Return)
+    elif request.method == 'POST':
+        LotNO = request.form.get("LotNO", default="", type=str)
+        conn = pymssql.connect(database='NSP', user='sa',
+                               password='prim', host='192.168.10.2', port=1433)
+        cursor = conn.cursor()
+        sql = "SELECT PartNo, PartCode, StartQty FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE LotNo = '{}';".format(
+            LotNO)
+        cursor.execute(sql)
+        row = cursor.fetchone()
+        Return = {}
+        if row:
+            Return["PartNO"] = row[0]
+            Return["PartCode"] = row[1]
+            Return["StartQty"] = row[2]
+            Return["LotNO"] = LotNO
+        else:
+            Return["PartNO"] = None
+            Return["PartCode"] = None
+            Return["StartQty"] = None
+            Return["LotNO"] = LotNO
         return jsonify(Return)
     else:
         return {'status': 'params error!'}
