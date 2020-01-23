@@ -43,7 +43,7 @@ def getmis():
             Return["PartCode"] = None
             Return["StartQty"] = None
             Return["LotNO"] = LotNO
-        return jsonify(Return)
+        return [jsonify(Return)]
     elif request.method == 'POST':
         LotNO = request.form.get("LotNO", default="", type=str)
         conn = pymssql.connect(database='NSP', user='sa',
@@ -64,9 +64,9 @@ def getmis():
             Return["PartCode"] = None
             Return["StartQty"] = None
             Return["LotNO"] = LotNO
-        return jsonify(Return)
+        return [jsonify(Return)]
     else:
-        return {'status': 'params error!'}
+        return {'error': 'true', 'message': 'params error!'}
 
 
 @app.route("/upload", methods=['POST'])
