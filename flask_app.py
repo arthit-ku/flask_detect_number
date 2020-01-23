@@ -5,7 +5,8 @@ import os
 import random
 import TrainAndTest as tr
 from io import BytesIO
-from flask import Flask, render_template, request, jsonify
+from json import dumps
+from flask import Flask, render_template, request, jsonify, make_response
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
 import time
@@ -33,6 +34,7 @@ def getmis():
         cursor.execute(sql)
         row = cursor.fetchone()
         Return = {}
+        ReturnArray = []
         if row:
             Return["PartNO"] = row[0]
             Return["PartCode"] = row[1]
@@ -43,7 +45,8 @@ def getmis():
             Return["PartCode"] = None
             Return["StartQty"] = None
             Return["LotNO"] = LotNO
-        return [jsonify(Return)]
+        ReturnArray.append(Return)
+        return make_response(dumps(ReturnArray))
     elif request.method == 'POST':
         LotNO = request.form.get("LotNO", default="", type=str)
         conn = pymssql.connect(database='NSP', user='sa',
@@ -54,6 +57,7 @@ def getmis():
         cursor.execute(sql)
         row = cursor.fetchone()
         Return = {}
+        ReturnArray = []
         if row:
             Return["PartNO"] = row[0]
             Return["PartCode"] = row[1]
@@ -64,7 +68,8 @@ def getmis():
             Return["PartCode"] = None
             Return["StartQty"] = None
             Return["LotNO"] = LotNO
-        return [jsonify(Return)]
+        ReturnArray.append(Return)
+        return make_response(dumps(ReturnArray))
     else:
         return {'error': 'true', 'message': 'params error!'}
 
