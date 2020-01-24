@@ -21,6 +21,25 @@ CORS(app)
 def addpic():
     return render_template('upload.html')
 
+@app.route("/misall", method=['POST', 'GET'])
+def getAll():
+    if(request.method == 'GET'):
+        conn = pymssql.connect(database='NSP', user='sa',
+                               password='prim', host='192.168.10.2', port=1433)
+        cursor = conn.cursor()
+        sql = "SELECT LotNo, PartNo, PartCode, StartQty FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID LIMIT 500;"
+        cursor.execute(sql)
+        Return = {}
+        ReturnArray = []
+        for row in cursor:
+            Return["LotNO"] = row[0]
+            Return["PartNO"] = row[1]
+            Return["PartCode"] = row[2]
+            Return["StartQty"] = row[3]
+            ReturnArray.append(Return)
+        return make_response(dumps(ReturnArray))
+    else:
+        return {"error": "params"}
 
 @app.route("/mis", methods=['POST', 'GET'])
 def getmis():
