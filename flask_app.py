@@ -21,74 +21,65 @@ CORS(app)
 def addpic():
     return render_template('upload.html')
 
-@app.route("/misall", method=['POST', 'GET'])
-def getAll():
+
+@app.route("/machine", methods=['POST', 'GET'])
+def getMachine():
     if(request.method == 'GET'):
         conn = pymssql.connect(database='NSP', user='sa',
                                password='prim', host='192.168.10.2', port=1433)
-        cursor = conn.cursor()
-        sql = "SELECT LotNo, PartNo, PartCode, StartQty FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID LIMIT 500;"
+        cursor = conn.cursor(as_dict=True)
+        sql = "SELECT MachineID, MachineNo FROM machine ORDER BY MachineID ASC"
         cursor.execute(sql)
-        Return = {}
         ReturnArray = []
         for row in cursor:
-            Return["LotNO"] = row[0]
-            Return["PartNO"] = row[1]
-            Return["PartCode"] = row[2]
-            Return["StartQty"] = row[3]
+            Return = {}
+            Return = row
             ReturnArray.append(Return)
         return make_response(dumps(ReturnArray))
+    elif(request.method == 'POST'):
+        return {'error': 'true', 'message': 'method not used error!'}
     else:
-        return {"error": "params"}
+        return {'error': 'true', 'message': 'params error!'}
+
 
 @app.route("/mis", methods=['POST', 'GET'])
 def getmis():
     if request.method == 'GET':
         LotNO = request.args.get("LotNO", default="", type=str)
+        PartNO = request.args.get("PartNO", default="", type=str)
+        Limit = request.args.get("Limit", default=0, type=int)
         conn = pymssql.connect(database='NSP', user='sa',
                                password='prim', host='192.168.10.2', port=1433)
-        cursor = conn.cursor()
-        sql = "SELECT PartNo, PartCode, StartQty FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE LotNo = '{}';".format(
-            LotNO)
-        cursor.execute(sql)
-        row = cursor.fetchone()
-        Return = {}
-        ReturnArray = []
-        if row:
-            Return["PartNO"] = row[0]
-            Return["PartCode"] = row[1]
-            Return["StartQty"] = row[2]
-            Return["LotNO"] = LotNO
+        cursor = conn.cursor(as_dict=True)
+        if(LotNO != "" and PartNO != ""):
+            if Limit == 0:
+                Limit = 100
+            sql = "SELECT TOP {} PartCode, StartQty FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE LotNO='{}' AND PartNO='{}' ORDER BY LotID DESC".format(
+                Limit, LotNO, PartNO)
+        elif(PartNO != ""):
+            if Limit == 0:
+                Limit = 100
+            sql = "SELECT TOP {} LotNo, PartCode, StartQty FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE PartNO='{}' ORDER BY LotID DESC".format(
+                Limit, PartNO)
+        elif(LotNO != ""):
+            if Limit == 0:
+                Limit = 100
+            sql = "SELECT TOP {} PartNO, PartCode, StartQty FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE LotNO='{}' ORDER BY LotID DESC".format(
+                Limit, LotNO)
         else:
-            Return["PartNO"] = None
-            Return["PartCode"] = None
-            Return["StartQty"] = None
-            Return["LotNO"] = LotNO
-        ReturnArray.append(Return)
+            if Limit == 0:
+                Limit = 100
+            sql = "SELECT TOP {} LotNo, PartNo, PartCode, StartQty FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID ORDER BY LotID DESC".format(
+                Limit)
+        cursor.execute(sql)
+        ReturnArray = []
+        for row in cursor:
+            Return = {}
+            Return = row
+            ReturnArray.append(Return)
         return make_response(dumps(ReturnArray))
     elif request.method == 'POST':
-        LotNO = request.form.get("LotNO", default="", type=str)
-        conn = pymssql.connect(database='NSP', user='sa',
-                               password='prim', host='192.168.10.2', port=1433)
-        cursor = conn.cursor()
-        sql = "SELECT PartNo, PartCode, StartQty FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE LotNo = '{}';".format(
-            LotNO)
-        cursor.execute(sql)
-        row = cursor.fetchone()
-        Return = {}
-        ReturnArray = []
-        if row:
-            Return["PartNO"] = row[0]
-            Return["PartCode"] = row[1]
-            Return["StartQty"] = row[2]
-            Return["LotNO"] = LotNO
-        else:
-            Return["PartNO"] = None
-            Return["PartCode"] = None
-            Return["StartQty"] = None
-            Return["LotNO"] = LotNO
-        ReturnArray.append(Return)
-        return make_response(dumps(ReturnArray))
+        return {'error': 'true', 'message': 'method not used error!'}
     else:
         return {'error': 'true', 'message': 'params error!'}
 
