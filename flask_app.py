@@ -4,8 +4,8 @@ import pymssql
 import os
 import random
 import TrainAndTest as tr
+import json
 from io import BytesIO
-from json import dumps
 from flask import Flask, render_template, request, jsonify, make_response
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
@@ -39,7 +39,7 @@ def getMachine():
             Return = {}
             Return = row
             ReturnArray.append(Return)
-        return make_response(dumps(ReturnArray))
+        return make_response(json.dumps(ReturnArray, ensure_ascii=True, indent=4, sort_keys=True))
     elif(request.method == 'POST'):
         return {'error': 'true', 'message': 'method not used error!'}
     else:
@@ -52,28 +52,33 @@ def getmis():
         LotNO = request.args.get("LotNO", default="", type=str)
         PartNO = request.args.get("PartNO", default="", type=str)
         Limit = request.args.get("Limit", default=0, type=int)
+        Like = request.args.get("Like", default=0, type=int)
         conn = pymssql.connect(database='NSP', user='sa',
                                password='prim', host='192.168.10.2', port=1433)
         cursor = conn.cursor(as_dict=True)
         if(LotNO != "" and PartNO != ""):
             if Limit == 0:
                 Limit = 100
-            sql = "SELECT TOP {} PartCode, StartQty FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE LotNO='{}' AND PartNO='{}' ORDER BY LotID DESC".format(
+            sql = "SELECT TOP {} PartCode, StartQty, IssuseDate FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE LotNO='{}' AND PartNO='{}' ORDER BY LotID DESC".format(
                 Limit, LotNO, PartNO)
         elif(PartNO != ""):
             if Limit == 0:
                 Limit = 100
-            sql = "SELECT TOP {} LotNo, PartCode, StartQty FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE PartNO='{}' ORDER BY LotID DESC".format(
-                Limit, PartNO)
+            if Like != 0:
+                sql = "SELECT TOP {} PartNo, LotNo, PartCode, StartQty, IssueDate FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE PartNO LIKE '%{}%' ORDER BY LotID DESC".format(
+                    Limit, PartNO)
+            else:
+                sql = "SELECT TOP {} LotNo, PartCode, StartQty, IssueDate FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE PartNO='{}' ORDER BY LotID DESC".format(
+                    Limit, PartNO)
         elif(LotNO != ""):
             if Limit == 0:
                 Limit = 100
-            sql = "SELECT TOP {} PartNO, PartCode, StartQty FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE LotNO='{}' ORDER BY LotID DESC".format(
+            sql = "SELECT TOP {} PartNO, PartCode, StartQty, IssueDate FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE LotNO='{}' ORDER BY LotID DESC".format(
                 Limit, LotNO)
         else:
             if Limit == 0:
                 Limit = 100
-            sql = "SELECT TOP {} LotNo, PartNo, PartCode, StartQty FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID ORDER BY LotID DESC".format(
+            sql = "SELECT TOP {} LotNo, PartNo, PartCode, StartQty, IssueDate FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID ORDER BY LotID DESC".format(
                 Limit)
         cursor.execute(sql)
         ReturnArray = []
@@ -81,7 +86,7 @@ def getmis():
             Return = {}
             Return = row
             ReturnArray.append(Return)
-        return make_response(dumps(ReturnArray))
+        return make_response(json.dumps(ReturnArray, indent=4, sort_keys=True, default=str))
     elif request.method == 'POST':
         return {'error': 'true', 'message': 'method not used for here!'}
     else:
