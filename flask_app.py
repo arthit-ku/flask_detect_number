@@ -25,10 +25,14 @@ def addpic():
 @app.route("/machine", methods=['POST', 'GET'])
 def getMachine():
     if(request.method == 'GET'):
+        Limit = request.args.get("Limit", default=0, type=int)
         conn = pymssql.connect(database='NSP', user='sa',
                                password='prim', host='192.168.10.2', port=1433)
         cursor = conn.cursor(as_dict=True)
-        sql = "SELECT MachineID, MachineNo FROM machine ORDER BY MachineID ASC"
+        if(Limit == 0):
+            Limit = 100
+        sql = "SELECT TOP {} MachineID, MachineNo FROM machine ORDER BY MachineID ASC".format(
+            Limit)
         cursor.execute(sql)
         ReturnArray = []
         for row in cursor:
@@ -79,7 +83,7 @@ def getmis():
             ReturnArray.append(Return)
         return make_response(dumps(ReturnArray))
     elif request.method == 'POST':
-        return {'error': 'true', 'message': 'method not used error!'}
+        return {'error': 'true', 'message': 'method not used for here!'}
     else:
         return {'error': 'true', 'message': 'params error!'}
 
