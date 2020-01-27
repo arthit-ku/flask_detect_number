@@ -31,7 +31,7 @@ def getMachine():
         cursor = conn.cursor(as_dict=True)
         if(Limit == 0):
             Limit = 100
-        sql = "SELECT TOP {} MachineID, MachineNo FROM machine ORDER BY MachineID ASC".format(
+        sql = "SELECT TOP {} MachineID, MachineNo, ModelName, Brand FROM machine ORDER BY MachineID ASC".format(
             Limit)
         cursor.execute(sql)
         ReturnArray = []
