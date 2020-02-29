@@ -51,16 +51,28 @@ def getmis():
     if request.method == 'GET':
         LotNO = request.args.get("LotNO", default="", type=str)
         PartNO = request.args.get("PartNO", default="", type=str)
+        PartCode = request.args.get("PartCode", default="", type=str)
         Limit = request.args.get("Limit", default=0, type=int)
         Like = request.args.get("Like", default=0, type=int)
         conn = pymssql.connect(database='NSP', user='sa',
                                password='prim', host='192.168.10.2', port=1433)
         cursor = conn.cursor(as_dict=True)
-        if(LotNO != "" and PartNO != ""):
-            if Limit == 0:
-                Limit = 100
+        if(PartCode != ""):
+            sql = "SELECT C.CustomerName, C,CustumerCode, "
+            sql += "     P.PartNo, P.PartName, P.PartCode, "
+            sql += "     L.CurrentQTY, L.IssueDate, "
+            sql += "     M.MaterialCode, M.MaterialName, M.MaterialType "
+            sql += "FROM CUSTOMER C"
+            sql += "INNER JOIN product P"
+            sql += "     ON P.CustomerID=C.CustomerID"
+            sql += "INNER JOIN lot L"
+            sql += "     ON L.ProductID=P.ProductID"
+            sql += "INNER JOIN material M"
+            sql += "     ON M.MaterialID=L.MaterialID"
+            sql += "WHERE PartCode='{}'".format(PartCode)
+        elif(LotNO != "" and PartNO != ""):
             sql = "SELECT TOP {} PartCode, CurrentQty, IssueDate FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE LotNO='{}' AND PartNO='{}' ORDER BY LotID DESC".format(
-                Limit, LotNO, PartNO)
+                LotNO, PartNO)
         elif(PartNO != ""):
             if Limit == 0:
                 Limit = 100
@@ -73,7 +85,7 @@ def getmis():
         elif(LotNO != ""):
             if Limit == 0:
                 Limit = 100
-            sql = "SELECT TOP {} PartNO, PartCode, CurrentQty, IssueDate FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE LotNO='{}' ORDER BY LotID DESC".format(
+            sql = "SELECT TOP {} LotNo, PartNo, PartCode, CurrentQty, IssueDate FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE LotNO='{}' ORDER BY LotID DESC".format(
                 Limit, LotNO)
         else:
             if Limit == 0:
