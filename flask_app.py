@@ -85,8 +85,20 @@ def getmis():
         elif(LotNO != ""):
             if Limit == 0:
                 Limit = 100
-            sql = "SELECT TOP {} LotNo, PartNo, PartCode, CurrentQty, IssueDate FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE LotNO='{}' ORDER BY LotID DESC".format(
-                Limit, LotNO)
+            sql = "SELECT TOP {} C.CustomerName, C.CustomerCode, "
+            sql += "     P.PartNo, P.PartName, P.PartCode, "
+            sql += "     L.CurrentQTY, L.IssueDate, L.LotNo, "
+            sql += "     M.MaterialCode, M.MaterialName, M.MaterialType "
+            sql += "FROM customer C "
+            sql += "INNER JOIN product P "
+            sql += "     ON P.CustomerID=C.CustomerID "
+            sql += "INNER JOIN lot L "
+            sql += "     ON L.ProductID=P.ProductID "
+            sql += "INNER JOIN material M "
+            sql += "     ON M.MaterialID=L.MaterialID "
+            sql += "WHERE L.LotNo='{}' ORDER BY L.LotID DESC".format(Limit, LotNO)
+            # sql = "SELECT TOP {} LotNo, PartNo, PartCode, CurrentQty, IssueDate FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE LotNO='{}' ORDER BY LotID DESC".format(
+            #    Limit, LotNO)
         else:
             if Limit == 0:
                 Limit = 100
