@@ -58,18 +58,18 @@ def getmis():
                                password='prim', host='192.168.10.2', port=1433)
         cursor = conn.cursor(as_dict=True)
         if(PartCode != ""):
-            sql = "SELECT C.CustomerName, C,CustumerCode, "
+            sql = "SELECT C.CustomerName, C.CustomerCode, "
             sql += "     P.PartNo, P.PartName, P.PartCode, "
             sql += "     L.CurrentQTY, L.IssueDate, "
             sql += "     M.MaterialCode, M.MaterialName, M.MaterialType "
-            sql += "FROM CUSTOMER C"
-            sql += "INNER JOIN product P"
-            sql += "     ON P.CustomerID=C.CustomerID"
-            sql += "INNER JOIN lot L"
-            sql += "     ON L.ProductID=P.ProductID"
-            sql += "INNER JOIN material M"
-            sql += "     ON M.MaterialID=L.MaterialID"
-            sql += "WHERE PartCode='{}'".format(PartCode)
+            sql += "FROM customer C "
+            sql += "INNER JOIN product P "
+            sql += "     ON P.CustomerID=C.CustomerID "
+            sql += "INNER JOIN lot L "
+            sql += "     ON L.ProductID=P.ProductID "
+            sql += "INNER JOIN material M "
+            sql += "     ON M.MaterialID=L.MaterialID "
+            sql += "WHERE P.PartCode='{}';".format(PartCode)
         elif(LotNO != "" and PartNO != ""):
             sql = "SELECT TOP {} PartCode, CurrentQty, IssueDate FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE LotNO='{}' AND PartNO='{}' ORDER BY LotID DESC".format(
                 LotNO, PartNO)
