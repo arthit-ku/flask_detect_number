@@ -83,9 +83,9 @@ def getmis():
                 sql = "SELECT TOP {} LotNo, PartCode, CurrentQty, IssueDate FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE PartNO='{}' ORDER BY LotID DESC".format(
                     Limit, PartNO)
         elif(LotNO != ""):
-            sql = "SELECT C.CustomerName AS Custumer, C.CustomerCode, "
+            sql = "SELECT C.CustomerName AS Customer, C.CustomerCode, "
             sql += "P.PartNo AS PartNumber, P.PartName, P.PartCode, "
-            sql += "L.CurrentQTY, L.IssueDate, L.LotNo, "
+            sql += "L.CurrentQty, L.IssueDate, L.LotNo, "
             sql += "M.MaterialName AS Material "
             sql += "FROM customer C "
             sql += "INNER JOIN product P "
