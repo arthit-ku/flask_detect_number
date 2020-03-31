@@ -5,10 +5,12 @@ import os
 import random
 import TrainAndTest as tr
 import json
+import mysql.connector
 from io import BytesIO
 from flask import Flask, render_template, request, jsonify, make_response
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
+
 import time
 
 app = Flask(__name__)
@@ -45,6 +47,17 @@ def getMachine():
     else:
         return {'error': 'true', 'message': 'params error!'}
 
+def queryMisConfig():
+    mydb = mysql.connector.connect(
+      host="localhost",
+      user="root",
+      passwd="qctest123",
+      database="qctest"
+    )
+    mycursor = mydb.cursor()
+    mycursor.execute("SELECT IpAddress, DbUsername, DbPassword FROM mis_config ORDER BY MisConfigID DESC LIMIT 0,1")
+    myresult = mycursor.fetchone()
+    return myresult[0], myresult[1], myresult[2]
 
 @app.route("/mis", methods=['POST', 'GET'])
 def getmis():
@@ -54,8 +67,9 @@ def getmis():
         PartCode = request.args.get("PartCode", default="", type=str)
         Limit = request.args.get("Limit", default=0, type=int)
         Like = request.args.get("Like", default=0, type=int)
-        conn = pymssql.connect(database='NSP', user='sa',
-                               password='prim', host='192.168.10.2', port=1433)
+        Host, User, Pass = queryMisConfig()
+        conn = pymssql.connect(database='NSP', user=User,
+                               password=Pass, host=Host, port=1433)
         cursor = conn.cursor(as_dict=True)
         if(PartCode != ""):
             sql = "SELECT C.CustomerName, C.CustomerCode, "
