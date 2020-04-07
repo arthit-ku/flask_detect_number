@@ -1,10 +1,12 @@
 import pymssql
 import os
 import json
+import mysql.connector
 from io import BytesIO
 from flask import Flask, render_template, request, jsonify, make_response
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
+
 import time
 
 app = Flask(__name__)
@@ -12,9 +14,11 @@ APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 # Enable CORS
 CORS(app)
 
+
 @app.route("/")
 def addpic():
     return {'error': 'true', 'message': 'params error!'}
+
 
 @app.route("/machine", methods=['POST', 'GET'])
 def getMachine():
@@ -22,7 +26,7 @@ def getMachine():
         Limit = request.args.get("Limit", default=0, type=int)
         try:
             conn = pymssql.connect(database='NSP', user='sa',
-                               password='1qaz2wsx#', host='192.168.10.7', port=1433)
+                                   password='1qaz2wsx#', host='192.168.10.7', port=1433)
         except:
             return {'error': 'true', 'message': 'connect db error!'}
         cursor = conn.cursor(as_dict=True)
@@ -42,6 +46,21 @@ def getMachine():
     else:
         return {'error': 'true', 'message': 'params error!'}
 
+
+def queryMisConfig():
+    mydb = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        passwd="qctest123",
+        database="qctest"
+    )
+    mycursor = mydb.cursor()
+    mycursor.execute(
+        "SELECT IpAddress, DbUsername, DbPassword FROM mis_config ORDER BY MisConfigID DESC LIMIT 0,1")
+    myresult = mycursor.fetchone()
+    return myresult[0], myresult[1], myresult[2]
+
+
 @app.route("/mis", methods=['POST', 'GET'])
 def getmis():
     if request.method == 'GET':
@@ -50,11 +69,9 @@ def getmis():
         PartCode = request.args.get("PartCode", default="", type=str)
         Limit = request.args.get("Limit", default=0, type=int)
         Like = request.args.get("Like", default=0, type=int)
-        try:
-            conn = pymssql.connect(database='NSP', user='sa',
-                               password='1qaz2wsx#', host='192.168.10.7', port=1433)
-        except:
-            return {'error': 'true', 'message': 'connect db error!'}
+        Host, User, Pass = queryMisConfig()
+        conn = pymssql.connect(database='NSP', user=User,
+                               password=Pass, host=Host, port=1433)
         cursor = conn.cursor(as_dict=True)
         if(PartCode != ""):
             sql = "SELECT C.CustomerName, C.CustomerCode, "
@@ -139,6 +156,7 @@ def getmis():
 #         seconds = et - st
 #         print("Seconds since epoch = {} s".format(seconds))
 #     return {'reading': img_value}
+
 
 if __name__ == "__main__":
     app.debug = True
