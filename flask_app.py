@@ -27,7 +27,7 @@ def getMachine():
         try:
             conn = pymssql.connect(database='NSP', user='sa',
                                    password='1qaz2wsx#', host='192.168.10.7', port=1433)
-        except:
+        except Exception:
             return {'error': 'true', 'message': 'connect db error!'}
         cursor = conn.cursor(as_dict=True)
         if(Limit == 0):
