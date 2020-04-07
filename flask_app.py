@@ -52,7 +52,7 @@ def queryMisConfig():
         host="localhost",
         user="root",
         passwd="qctest123",
-        database="qctest"
+        database="qctest4"
     )
     mycursor = mydb.cursor()
     mycursor.execute(
