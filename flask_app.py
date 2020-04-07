@@ -1,9 +1,5 @@
-# TrainAndTest.py
-
 import pymssql
 import os
-import random
-import TrainAndTest as tr
 import json
 from io import BytesIO
 from flask import Flask, render_template, request, jsonify, make_response
@@ -16,18 +12,19 @@ APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 # Enable CORS
 CORS(app)
 
-
 @app.route("/")
 def addpic():
-    return render_template('upload.html')
-
+    return {'error': 'true', 'message': 'params error!'}
 
 @app.route("/machine", methods=['POST', 'GET'])
 def getMachine():
     if(request.method == 'GET'):
         Limit = request.args.get("Limit", default=0, type=int)
-        conn = pymssql.connect(database='NSP', user='sa',
-                               password='prim', host='192.168.10.2', port=1433)
+        try:
+            conn = pymssql.connect(database='NSP', user='sa',
+                               password='1qaz2wsx#', host='192.168.10.7', port=1433)
+        except:
+            return {'error': 'true', 'message': 'connect db error!'}
         cursor = conn.cursor(as_dict=True)
         if(Limit == 0):
             Limit = 100
@@ -45,7 +42,6 @@ def getMachine():
     else:
         return {'error': 'true', 'message': 'params error!'}
 
-
 @app.route("/mis", methods=['POST', 'GET'])
 def getmis():
     if request.method == 'GET':
@@ -54,8 +50,11 @@ def getmis():
         PartCode = request.args.get("PartCode", default="", type=str)
         Limit = request.args.get("Limit", default=0, type=int)
         Like = request.args.get("Like", default=0, type=int)
-        conn = pymssql.connect(database='NSP', user='sa',
-                               password='prim', host='192.168.10.2', port=1433)
+        try:
+            conn = pymssql.connect(database='NSP', user='sa',
+                               password='1qaz2wsx#', host='192.168.10.7', port=1433)
+        except:
+            return {'error': 'true', 'message': 'connect db error!'}
         cursor = conn.cursor(as_dict=True)
         if(PartCode != ""):
             sql = "SELECT C.CustomerName, C.CustomerCode, "
@@ -112,36 +111,34 @@ def getmis():
     else:
         return {'error': 'true', 'message': 'params error!'}
 
+# @app.route("/upload", methods=['POST'])
+# def upload():
+#     st = time.time()
+#     target = os.path.join(APP_ROOT, 'images/')
+#     # print(target)
 
-@app.route("/upload", methods=['POST'])
-def upload():
-    st = time.time()
-    target = os.path.join(APP_ROOT, 'images/')
-    # print(target)
+#     if not os.path.isdir(target):
+#         os.mkdir(target)
 
-    if not os.path.isdir(target):
-        os.mkdir(target)
+#     for file in request.files.getlist("file"):
+#         # print(file)
+#         filename = file.filename
+#         filename = str(random.randint(1, 100)) + filename
+#         destination = target + filename
+#         file.save(destination)
+#         # return destination
+#         img_value = tr.recg(destination)
+#         # return "xxx"
+#         if img_value.count('.') <= 1:
+#             img_value = img_value
+#         else:
+#             img_value = None
+#             # img_value = "Please Try Again Later"
 
-    for file in request.files.getlist("file"):
-        # print(file)
-        filename = file.filename
-        filename = str(random.randint(1, 100)) + filename
-        destination = target + filename
-        file.save(destination)
-        # return destination
-        img_value = tr.recg(destination)
-        # return "xxx"
-        if img_value.count('.') <= 1:
-            img_value = img_value
-        else:
-            img_value = None
-            # img_value = "Please Try Again Later"
-
-        et = time.time()
-        seconds = et - st
-        print("Seconds since epoch = {} s".format(seconds))
-    return {'reading': img_value}
-
+#         et = time.time()
+#         seconds = et - st
+#         print("Seconds since epoch = {} s".format(seconds))
+#     return {'reading': img_value}
 
 if __name__ == "__main__":
     app.debug = True
