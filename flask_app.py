@@ -70,8 +70,12 @@ def getmis():
         Limit = request.args.get("Limit", default=0, type=int)
         Like = request.args.get("Like", default=0, type=int)
         Host, User, Pass = queryMisConfig()
-        conn = pymssql.connect(database='NSP', user=User,
-                               password=Pass, host=Host, port=1433)
+        try:
+            conn = pymssql.connect(database='NSP', user=User,
+                                   password=Pass, host=Host, port=1433)
+        except Exception:
+            return {'error': 'true', 'message': 'connect db error!'}
+
         cursor = conn.cursor(as_dict=True)
         if(PartCode != ""):
             sql = "SELECT C.CustomerName, C.CustomerCode, "
