@@ -92,7 +92,7 @@ def getmis():
             sql += "WHERE P.PartCode='{}';".format(PartCode)
         elif(LotNO != "" and PartNO != ""):
             sql = "SELECT TOP {} PartCode, CurrentQty, IssueDate FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE LotNO='{}' AND PartNO='{}' ORDER BY LotID DESC".format(
-                LotNO, PartNO)
+                Limit, LotNO, PartNO)
         elif(PartNO != ""):
             if Limit == 0:
                 Limit = 100
