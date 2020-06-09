@@ -24,9 +24,10 @@ def addpic():
 def getMachine():
     if(request.method == 'GET'):
         Limit = request.args.get("Limit", default=0, type=int)
+        Host, User, Pass = queryMisConfig()
         try:
-            conn = pymssql.connect(database='NSP', user='sa',
-                                   password='1qaz2wsx#', host='192.168.10.7', port=1433)
+            conn = pymssql.connect(database='NSP', user=User,
+                                   password=Pass, host=Host, port=1433)
         except Exception:
             return {'error': 'true', 'message': 'connect db error!'}
         cursor = conn.cursor(as_dict=True)
@@ -65,10 +66,7 @@ def queryMisConfig():
 def getmis():
     if request.method == 'GET':
         LotNO = request.args.get("LotNO", default="", type=str)
-        PartNO = request.args.get("PartNO", default="", type=str)
-        PartCode = request.args.get("PartCode", default="", type=str)
-        Limit = request.args.get("Limit", default=0, type=int)
-        Like = request.args.get("Like", default=0, type=int)
+        LocationID = request.args.get("LocationID", default=1,type=str)
         Host, User, Pass = queryMisConfig()
         try:
             conn = pymssql.connect(database='NSP', user=User,
@@ -77,49 +75,15 @@ def getmis():
             return {'error': 'true', 'message': 'connect db error!'}
 
         cursor = conn.cursor(as_dict=True)
-        if(PartCode != ""):
-            sql = "SELECT C.CustomerName, C.CustomerCode, "
-            sql += "     P.PartNo, P.PartName, P.PartCode, "
-            sql += "     L.CurrentQTY, L.IssueDate, "
-            sql += "     M.MaterialCode, M.MaterialName, M.MaterialType "
-            sql += "FROM customer C "
-            sql += "INNER JOIN product P "
-            sql += "     ON P.CustomerID=C.CustomerID "
-            sql += "INNER JOIN lot L "
-            sql += "     ON L.ProductID=P.ProductID "
-            sql += "INNER JOIN material M "
-            sql += "     ON M.MaterialID=L.MaterialID "
-            sql += "WHERE P.PartCode='{}';".format(PartCode)
-        elif(LotNO != "" and PartNO != ""):
-            sql = "SELECT TOP {} PartCode, CurrentQty, IssueDate FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE LotNO='{}' AND PartNO='{}' ORDER BY LotID DESC".format(
-                Limit, LotNO, PartNO)
-        elif(PartNO != ""):
-            if Limit == 0:
-                Limit = 100
-            if Like != 0:
-                sql = "SELECT TOP {} PartNo, LotNo, PartCode, CurrentQty, IssueDate FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE PartNO LIKE '%{}%' ORDER BY LotID DESC".format(
-                    Limit, PartNO)
-            else:
-                sql = "SELECT TOP {} LotNo, PartCode, CurrentQty, IssueDate FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID WHERE PartNO='{}' ORDER BY LotID DESC".format(
-                    Limit, PartNO)
-        elif(LotNO != ""):
-            sql = "SELECT C.CustomerName AS Customer, C.CustomerCode, "
-            sql += "P.PartNo AS PartNumber, P.PartName, P.PartCode, "
-            sql += "L.CurrentQty, L.IssueDate, L.LotNo, "
-            sql += "M.MaterialName AS Material "
-            sql += "FROM customer C "
-            sql += "INNER JOIN product P "
-            sql += "ON P.CustomerID=C.CustomerID "
-            sql += "INNER JOIN lot L "
-            sql += "ON L.ProductID=P.ProductID "
-            sql += "INNER JOIN material M "
-            sql += "ON M.MaterialID=L.MaterialID "
-            sql += "WHERE L.LotNo='{}' ORDER BY L.LotID DESC".format(LotNO)
-        else:
-            if Limit == 0:
-                Limit = 100
-            sql = "SELECT TOP {} LotNo, PartNo, PartCode, CurrentQty, IssueDate FROM lot L INNER JOIN product P ON L.ProductID = P.ProductID ORDER BY LotID DESC".format(
-                Limit)
+        sql = "SELECT L.*,P.PartCode FROM Lot_Travel L  INNER JOIN product P ON L.ProductID=P.ProductID"
+        if LocationID=="1":
+            sql += " WHERE L.LotNo='{}' AND L.ProcessID=36 ORDER BY LotID DESC".format(LotNO)
+        elif LocationID=="2":
+            sql += " WHERE L.LotNo='{}' AND L.ProcessID=35 ORDER BY LotID DESC".format(LotNO)
+        elif LocationID=="3":
+            sql += " WHERE L.LotNo='{}' AND L.ProcessID=75 ORDER BY LotID DESC".format(LotNO)
+        elif LocationID=="4":
+            sql += " WHERE L.LotNo='{}' AND L.ProcessID=422 ORDER BY LotID DESC".format(LotNO)
         cursor.execute(sql)
         ReturnArray = []
         for row in cursor:
