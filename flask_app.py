@@ -77,9 +77,9 @@ def getmis():
         cursor = conn.cursor(as_dict=True)
         sql = "SELECT L.*,P.PartCode FROM Lot_Travel L  INNER JOIN product P ON L.ProductID=P.ProductID"
         if LocationID=="1":
-            sql += " WHERE L.LotNo='{}' AND (L.ProcessID=36 OR L.ProcessID=505) ORDER BY LotID DESC".format(LotNO)
+            sql += " WHERE L.LotNo='{}' AND (L.ProcessID=36 OR L.ProcessID=503) ORDER BY LotID DESC".format(LotNO)
         elif LocationID=="2":
-            sql += " WHERE L.LotNo='{}' AND (L.ProcessID=35 OR L.ProcessID=503) ORDER BY LotID DESC".format(LotNO)
+            sql += " WHERE L.LotNo='{}' AND (L.ProcessID=35 OR L.ProcessID=505) ORDER BY LotID DESC".format(LotNO)
         elif LocationID=="3":
             sql += " WHERE L.LotNo='{}' AND L.ProcessID=75 ORDER BY LotID DESC".format(LotNO)
         elif LocationID=="4":
