@@ -75,7 +75,11 @@ def getmis():
             return {'error': 'true', 'message': 'connect db error!'}
 
         cursor = conn.cursor(as_dict=True)
-        sql = "SELECT L.*,P.PartCode FROM Lot_Travel L  INNER JOIN product P ON L.ProductID=P.ProductID"
+        sql = "SELECT L.*,P.PartCode,P.PartNo AS PartNumber,P.PartName,C.CustomerName AS Customer,M.MaterialName AS Material"
+        sql += " FROM Lot_Travel L"
+        sql += " INNER JOIN product P ON L.ProductID=P.ProductID"
+        sql += " INNER JOIN customer C ON P.CustomerID=C.CustomerID"
+        sql += " INNER JOIN material M ON L.MaterialID=M.MaterialID"
         if LocationID=="1":
             sql += " WHERE L.LotNo='{}' AND L.ProcessID=36 ORDER BY LotID DESC".format(LotNO)
         elif LocationID=="2":
