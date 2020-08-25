@@ -90,9 +90,9 @@ def getmis():
             sql += " WHERE L.LotNo='{}' AND L.ProcessID=422 ORDER BY LotID DESC".format(LotNO)
         elif LocationID=="5":
             sql += " WHERE L.LotNo='{}' AND L.ProcessID=422 ORDER BY LotID DESC".format(LotNO)
-        elif LocationID=="6":
-            sql += " WHERE L.LotNo='{}' AND L.ProcessID=505 ORDER BY LotID DESC".format(LotNO)
         elif LocationID=="7":
+            sql += " WHERE L.LotNo='{}' AND L.ProcessID=505 ORDER BY LotID DESC".format(LotNO)
+        elif LocationID=="8":
             sql += " WHERE L.LotNo='{}' AND L.ProcessID=503 ORDER BY LotID DESC".format(LotNO)
         cursor.execute(sql)
         ReturnArray = []
