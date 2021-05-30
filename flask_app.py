@@ -292,9 +292,9 @@ def sync_process():
         cursor.execute(sql)
         ReturnArray = []
         for row in cursor:
-            sql="INSERT INTO `processes`(`id`, `process_name`, `shop`, `is_delete`, `created_at`, `created_user_id`, `updated_at`, `updated_user_id`)"
-            sql+=" VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-            val=(row["ProcessID"],row["ProcessName"],row["Shop"],'N',datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
+            sql="INSERT INTO `processes`(`id`, `process_name`,`spec`, `shop`, `is_delete`, `created_at`, `created_user_id`, `updated_at`, `updated_user_id`)"
+            sql+=" VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            val=(row["ProcessID"],row["ProcessName"],row["Spec"],row["Shop"],'N',datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
             mycursor.execute(sql,val)
             mydb.commit()
             ReturnArray = []

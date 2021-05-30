@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "C:\\Users\\fook\\AppData\\Local\\Programs\\Python\\Python36\\python.exe",
+    "python.pythonPath": "C:\\Users\\fooki\\AppData\\Local\\Programs\\Python\\Python39\\python.exe",
     "python.linting.flake8Args": [
         "--max-line-length=200",
         "--ignore=E402,F841,F401,E302,E305,E902",
