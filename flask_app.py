@@ -91,7 +91,8 @@ def sync_product():
         for row in cursor:
             sql="INSERT INTO `products`(`id`, `part_no`, `part_name`, `part_code`, `customer_id`, `is_delete`, `created_at`, `created_user_id`, `updated_at`, `updated_user_id`)"
             sql+=" VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            val=(row['ProductID'],row["PartNo"],row["PartName"],row["PartCode"],row["CustomerID"],'N',datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
+            val=(row['ProductID'],row["PartNo"],row["PartName"],row["PartCode"],row["CustomerID"],'N',
+                datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
             mycursor.execute(sql,val)
             mydb.commit()
             ReturnArray = []
@@ -130,7 +131,8 @@ def sync_spare_part():
         for row in cursor:
             sql="INSERT INTO `spare_parts`(`id`, `spare_part_name`, `spare_part_code`, `category_id`, `image_url`, `is_delete`, `created_at`, `created_user_id`, `updated_at`, `updated_user_id`)"
             sql+=" VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            val=(row["SparePartID"],row["SparePartName"],row["SparePartCode"],row["CategoryID"],'','N',datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
+            val=(row["SparePartID"],row["SparePartName"],row["SparePartCode"],row["CategoryID"],'','N',
+                datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
             mycursor.execute(sql,val)
             sql="INSERT INTO `spare_part_stores`(`spare_part_id`,`store_id`,`balance_qty`,`created_at`, `created_user_id`, `updated_at`,`updated_user_id`)"
             sql+=" VALUES (%s,%s,%s,%s,%s,%s,%s)"
@@ -177,7 +179,8 @@ def sync_customer():
         for row in cursor:
             sql="INSERT INTO `customers`(`id`, `customer_code`, `customer_name`, `is_delete`, `created_at`, `created_user_id`, `updated_at`, `updated_user_id`)"
             sql+=" VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-            val=(row["CustomerID"],row["CustomerCode"],row["CustomerName"],'N',datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
+            val=(row["CustomerID"],row["CustomerCode"],row["CustomerName"],'N',
+                datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
             mycursor.execute(sql,val)
             mydb.commit()
             ReturnArray = []
@@ -216,7 +219,8 @@ def sync_machine():
         for row in cursor:
             sql="INSERT INTO `machines`(`id`, `machine_no`, `machine_name`, `model_id`, `is_delete`, `created_at`, `created_user_id`, `updated_at`, `updated_user_id`)"
             sql+=" VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            val=(row["MachineID"],row["MachineNo"],row["MachineNo"],1,'N',datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
+            val=(row["MachineID"],row["MachineNo"],row["MachineNo"],1,'N',
+                datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
             mycursor.execute(sql,val)
             mydb.commit()
             ReturnArray = []
@@ -255,7 +259,8 @@ def sync_vendor():
         for row in cursor:
             sql="INSERT INTO `vendors`(`id`, `vendor_code`, `vendor_name`, `is_delete`, `created_at`, `created_user_id`, `updated_at`, `updated_user_id`)"
             sql+=" VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-            val=(row["VendorID"],row["VendorCode"],row["VendorName"],'N',datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
+            val=(row["VendorID"],row["VendorCode"],row["VendorName"],'N',
+                datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
             mycursor.execute(sql,val)
             mydb.commit()
             ReturnArray = []
@@ -294,7 +299,8 @@ def sync_process():
         for row in cursor:
             sql="INSERT INTO `processes`(`id`, `process_name`,`spec`, `shop`, `is_delete`, `created_at`, `created_user_id`, `updated_at`, `updated_user_id`)"
             sql+=" VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            val=(row["ProcessID"],row["ProcessName"],row["Spec"],row["Shop"],'N',datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
+            val=(row["ProcessID"],row["ProcessName"],row["Spec"],row["Shop"],'N',
+                datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
             mycursor.execute(sql,val)
             mydb.commit()
             ReturnArray = []
@@ -332,7 +338,8 @@ def sync_product_process():
         for row in cursor:
             sql="INSERT INTO `temp_product_processes`(`product_id`, `process_id`,`process_type`,`seq_no`,`on_pocket`, `is_delete`, `created_at`, `created_user_id`, `updated_at`, `updated_user_id`)"
             sql+=" VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            val=(row["ProductID"],row["ProcessID"],row["ProcessType"],row["SeqNo"],row["OnPocket"],'N',datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
+            val=(row["ProductID"],row["ProcessID"],row["ProcessType"],row["SeqNo"],row["OnPocket"],'N',
+                datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
             mycursor.execute(sql,val)
             mydb.commit()
         
@@ -384,7 +391,8 @@ def sync_spare_receive():
         for row in cursor:
             sql="INSERT INTO `spare_receives`(`id`, `vendor_id`, `inv_no`, `receive_date`,`currency`, `created_at`, `created_user_id`, `updated_at`, `updated_user_id`)"
             sql+=" VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            val=(row["SpareReceiveID"],row["VendorID"],row["InvNo"],row["ReceiveDate"].date().isoformat(),row["Currency"],datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
+            val=(row["SpareReceiveID"],row["VendorID"],row["InvNo"],row["ReceiveDate"].date().isoformat(),row["Currency"],
+                datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
             mycursor.execute(sql,val)
             mydb.commit()
             ReturnArray = []
@@ -423,16 +431,18 @@ def sync_spare_receive_detail():
         for row in cursor:
             sql="INSERT INTO `spare_receive_details`(`id`, `spare_receive_id`, `spare_part_id`, `spare_qty`, `thb_price`, `created_at`, `created_user_id`, `updated_at`, `updated_user_id`)"
             sql+=" VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            val=(row["SpareReceiveDetailID"],row["SpareReceiveID"],row["SparePartID"],row["SpareQty"],row["THBPrice"],datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
+            val=(row["SpareReceiveDetailID"],row["SpareReceiveID"],row["SparePartID"],row["SpareQty"],row["THBPrice"],
+                datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
             mycursor.execute(sql,val)
             mydb.commit()
             sql="INSERT INTO `spare_part_qty_logs`(`spare_part_id`,`store_id`, `operation_type`, `update_qty`, `ref_id`, `created_at`, `created_user_id`, `updated_at`, `updated_user_id`)"
             sql+=" VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            val=(row["SparePartID"],'1','RECV',row["SpareQty"],row["SpareReceiveDetailID"],datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
+            val=(row["SparePartID"],'1','RECV',row["SpareQty"],row["SpareReceiveDetailID"],datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,
+                datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
             mycursor.execute(sql,val)
             sql="UPDATE `spare_part_stores` SET `balance_qty`=`balance_qty` + " + str(row["SpareQty"])+" WHERE `spare_part_id`=" + str(row["SparePartID"])+" AND `store_id`='1'"
             mycursor.execute(sql)
-            sql="UPDATE `spare_parts` SET `last_price`=" + str(row["THBPrice"]) + " WHERE `spare_part_id`=" + str(row["SparePartID"])
+            sql="UPDATE `spare_parts` SET `last_price`=" + str(row["THBPrice"]) + " WHERE `id`=" + str(row["SparePartID"])
             mycursor.execute(sql)
             mydb.commit()
             ReturnArray = []
