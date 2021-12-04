@@ -142,6 +142,16 @@ def sync_spare_part():
             sql+=" VALUES (%s,%s,%s,%s,%s,%s,%s)"
             val=(row["SparePartID"],'2','0',datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
             mycursor.execute(sql,val)
+            
+            sql="INSERT INTO `regrind_spare_stores`(`spare_part_id`,`regrind_store_id`,`balance_qty`,`created_at`, `created_user_id`, `updated_at`,`updated_user_id`)"
+            sql+=" VALUES (%s,%s,%s,%s,%s,%s,%s)"
+            val=(row["SparePartID"],'1','0',datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
+            mycursor.execute(sql,val)
+            sql="INSERT INTO `regrind_spare_stores`(`spare_part_id`,`regrind_store_id`,`balance_qty`,`created_at`, `created_user_id`, `updated_at`,`updated_user_id`)"
+            sql+=" VALUES (%s,%s,%s,%s,%s,%s,%s)"
+            val=(row["SparePartID"],'2','0',datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
+            mycursor.execute(sql,val)
+
             mydb.commit()
             ReturnArray = []
             Return = row
