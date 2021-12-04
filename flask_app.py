@@ -315,7 +315,8 @@ def sync_process():
 @app.route("/mis_sync_product_process", methods=['POST','GET'])
 def sync_product_process():
     if request.method == 'GET':
-
+        product_id = request.args.get('product_id')
+        process_type = request.args.get('process_type')
         mydb = mysql.connector.connect(
             host="localhost",
             user="root",
@@ -323,9 +324,9 @@ def sync_product_process():
             database="tool_store_db"
         )
         mycursor = mydb.cursor()
-        mycursor.execute("TRUNCATE TABLE temp_product_processes")
+        mycursor.execute("UPDATE product_processes SET is_delete='Y',updated_at=NOW() WHERE product_id="+product_id+" AND process_type="+process_type)
         mydb.commit()
-        sql = "SELECT * FROM product_process"
+        sql = "SELECT PP.*,P.Spec FROM product_process PP INNER JOIN process P ON PP.ProcessID=P.ProcessID WHERE PP.ProductID="+product_id+" AND PP.ProcessType="+process_type+" ORDER BY SeqNo"
         Host, User, Pass = queryMisConfig()
         try:
             conn = pymssql.connect(database='NSP', user=User, password=Pass, host=Host, port=1433)
@@ -335,28 +336,32 @@ def sync_product_process():
         cursor = conn.cursor(as_dict=True)
         cursor.execute(sql)
         ReturnArray = []
+        sql="INSERT INTO `product_processes`(`product_id`, `process_id`,`process_type`,`seq_no`,`spec`,`on_pocket`,`master_cost`,`last_cost`, `is_delete`, `created_at`, `created_user_id`, `updated_at`, `updated_user_id`)"
+        sql+=" VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        val=(product_id,1,process_type,0,'','N','0.00','0.00','N',
+            datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,
+            datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
+        mycursor.execute(sql,val)
+        mydb.commit()
+        
+        ReturnArray = []
+        i=1
         for row in cursor:
-            sql="INSERT INTO `temp_product_processes`(`product_id`, `process_id`,`process_type`,`seq_no`,`on_pocket`, `is_delete`, `created_at`, `created_user_id`, `updated_at`, `updated_user_id`)"
-            sql+=" VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            val=(row["ProductID"],row["ProcessID"],row["ProcessType"],row["SeqNo"],row["OnPocket"],'N',
+            sql="INSERT INTO `product_processes`(`product_id`, `process_id`,`process_type`,`seq_no`,`spec`,`on_pocket`,`master_cost`,`last_cost`, `is_delete`, `created_at`, `created_user_id`, `updated_at`, `updated_user_id`)"
+            sql+=" VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            val=(row["ProductID"],row["ProcessID"],row["ProcessType"],row["SeqNo"],row["Spec"],row["OnPocket"],'0.00','0.00','N',
                 datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
             mycursor.execute(sql,val)
             mydb.commit()
-        
-        mycursor.execute("""SELECT t.* FROM temp_product_processes t 
-            LEFT JOIN product_processes p ON (t.product_id,t.process_id,t.process_type)=(p.product_id,p.process_id,p.process_type)
-            WHERE p.product_id IS NULL""")
-        myresult = mycursor.fetchall()
-        
-        for x in myresult:
-            sql="INSERT INTO `product_processes`(`product_id`, `process_id`,`process_type`,`seq_no`,`on_pocket`, `is_delete`, `created_at`, `created_user_id`, `updated_at`, `updated_user_id`)"
-            sql+=" VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            val=(x[1],x[2],x[3],x[4],x[5],'N',datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
-            mycursor.execute(sql,val)
-            mydb.commit()
-            ReturnArray = []
-            Return = x
+            Return = row
             ReturnArray.append(Return)
+            i=i+1
+        sql="INSERT INTO `product_processes`(`product_id`, `process_id`,`process_type`,`seq_no`,`spec`,`on_pocket`,`master_cost`,`last_cost`, `is_delete`, `created_at`, `created_user_id`, `updated_at`, `updated_user_id`)"
+        sql+=" VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        val=(product_id,2,process_type,i,'','N','0.00','0.00','N',
+            datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1,datetime.datetime.now().replace(microsecond=0).isoformat().replace("T"," "),1)
+        mycursor.execute(sql,val)
+        mydb.commit()
 
         return make_response(json.dumps(ReturnArray, indent=4, sort_keys=True, default=str))
     elif request.method == 'POST':
