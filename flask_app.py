@@ -511,6 +511,8 @@ def getmis():
             sql += " WHERE L.LotNo='{}' AND L.ProcessID=617 ORDER BY LotID DESC".format(LotNO)
         elif LocationID=="13":
             sql += " WHERE L.LotNo='{}' AND L.ProcessID=616 ORDER BY LotID DESC".format(LotNO)
+        elif LocationID=="14":
+            sql += " WHERE L.LotNo='{}' AND L.ProcessID=646 ORDER BY LotID DESC".format(LotNO)
         cursor.execute(sql)
         ReturnArray = []
         for row in cursor:
