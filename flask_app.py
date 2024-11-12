@@ -7,7 +7,6 @@ from flask import Flask, render_template, request, jsonify, make_response
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
 import datetime
-import datetime
 
 import time
 
